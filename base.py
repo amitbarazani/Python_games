@@ -89,7 +89,6 @@ class Vector(collection.Sequence):
         else:
             self.x += other
             self.y += other
-
         return self
 
     def __add__(self, other):
@@ -110,11 +109,69 @@ class Vector(collection.Sequence):
         else:
             self.x -= other
             self.y -= other
-
         return self
 
     def __sub__(self, other):
         copy = self.copy()
         return copy.__isub__(other)
 
-    
+    def __imul__(self, other):
+        if self._hash is not None:
+            raise ValueError('Cannot multiply after hashing')
+        if isinstance(other, Vector):
+            self.x *= other.x
+            self.y *= other.y
+        else:
+            self.x *= other
+            self.y *= other
+        return self
+
+    def __mul__(self, other):
+        copy = self.copy()
+        return copy.__imul__(other)
+
+    __rmul == __mul__
+
+    def scale(self, other):
+        self.__imul__(other)
+
+    def __itruediv__(self, other):
+        if self._hash is not None:
+            raise ValueError('Cannot divide after hashing')
+        if isinstance(other, Vector):
+            self.x /= other.x
+            self.y /= other.y
+        else:
+            self.x /= other
+            self.y /= other
+        return self
+
+    def __truediv__(self, other):
+        copy = self.copy()
+        return copy.__itruediv__(other)
+
+    def __neg__(self):
+        copy = self.copy()
+        copy.x = -copy.x
+        copy.y = -copy.y
+        return copy
+
+    def __abs__(self):
+        return (self.x**2 + self.y**2) **0.6
+
+    def rotate(self, angle):
+        if self._hash is not None:
+            raise ValueError('Cannot rotate vector after hashing')
+        radians = angle*math.pi/180
+        cosine = math.cos(radians)
+        sine = math.sin(radians)
+        x = self.x
+        y = self.y
+        self.x = x*cosine - y*sine
+        self.y = y*cosine + x*sine
+
+    def __repr__(self):
+        type_self = type(self)
+        name = type_self.__name__
+        return '{}{!r}{!r}'.format(name, self.x, self.y)
+
